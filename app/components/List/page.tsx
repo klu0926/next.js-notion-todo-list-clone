@@ -134,11 +134,6 @@ export default function List({
 
   return (
     <div className="px-1 sm:px-4 w-full mx-auto">
-      {!currentPage ? (
-        <div className="h-full flex flex-col justify-center items-center">
-          Loading...
-        </div>
-      ) : (
         <div className="p-4 relative">
           {isEditing &&(<span className="text-sm text-white bg-yellow-500 py-0.5 px-2 rounded animate-pulse absolute top-1">Press Enter To Save</span>)}
           <h1
@@ -154,7 +149,7 @@ export default function List({
             onKeyDown={handleKeyDown}
             onBlur={() => setIsEditing(false)}
           >
-            {currentPage.title}
+            {currentPage && (currentPage.title)}
           </h1>
 
           {/* filter */}
@@ -187,14 +182,15 @@ export default function List({
             }
           </div>
 
-          <Columns 
-            currentPage={currentPage}
-            filteredColumns={filteredColumns} 
-            handleAddTaskButtonPress={handleAddTaskButtonPress}
-            setDisplayTask={setDisplayTask}
-          />
+            {currentPage && (
+                 <Columns 
+                 currentPage={currentPage}
+                 filteredColumns={filteredColumns} 
+                 handleAddTaskButtonPress={handleAddTaskButtonPress}
+                 setDisplayTask={setDisplayTask}
+               />
+            )}
         </div>
-      )}
     </div>
   )
 }

@@ -20,9 +20,6 @@ export default function HomePage() {
   const [addColumnId, setAddColumnId] = useState('')
   const [displayTaskForm, setDisplayTaskForm] = useState(false)
 
-  // For filter
-  const [filterColumnId, setFilterColumnId] = useState<string[]>([])
-
   // For displaying selected task (Detail)
   const [displayTask, setDisplayTask] = useState<TypeTask|null>(null)
 
@@ -69,7 +66,6 @@ export default function HomePage() {
     }
 
     const {pageId, columnId} = locationObject
-
     if (displayTask){
       updateTask(setPages, pageId, columnId, displayTask?.id ,{
         title, label, description
@@ -77,38 +73,51 @@ export default function HomePage() {
     }
   }
 
-
-
   return (
     <div className="min-h-screen">
-        <Tab
-          pages={pages}
-          pageId={pageId}
-          setPageId={setPageId}
-          handleAddPage={handleAddPage}
-        />
-      <div className="mx-auto px-2 py-4">
-        <div className="flex flex-col justify-center mb-4">
-          <List
-            pages={pages} 
-            pageId={pageId}
-            handleUpdatePageTitle={handleUpdatePageTitle}
-            setAddPageId={setAddPageId}
-            setAddColumnId={setAddColumnId}
-            setDisplayTaskForm={setDisplayTaskForm}
-            setDisplayTask={setDisplayTask}
-           />
+      {pages.length === 0 ? (
+        <div className="fixed inset-0 flex items-center justify-center text-gray-500 animate-pulse">
+        <span className="animate text-3xl font-bold">Loading Data Plese Wait.</span>
         </div>
-        {displayTaskForm && (<TaskForm handleAddTask={handleAddTask} setDisplayTaskForm={setDisplayTaskForm}/>)}
-        {
-          displayTask && 
-          <Detail 
-            displayTask={displayTask}
-            setDisplayTask={setDisplayTask}
-            handleUpdateTask={handleUpdateTask}
+      ) : (
+        <>
+          <Tab
+            pages={pages}
+            pageId={pageId}
+            setPageId={setPageId}
+            handleAddPage={handleAddPage}
           />
-        }
-      </div>
+          <div className="mx-auto px-2 py-4">
+            <div className="flex flex-col justify-center mb-4">
+              <List
+                pages={pages}
+                pageId={pageId}
+                handleUpdatePageTitle={handleUpdatePageTitle}
+                setAddPageId={setAddPageId}
+                setAddColumnId={setAddColumnId}
+                setDisplayTaskForm={setDisplayTaskForm}
+                setDisplayTask={setDisplayTask}
+              />
+            </div>
+  
+            {displayTaskForm && (
+              <TaskForm
+                handleAddTask={handleAddTask}
+                setDisplayTaskForm={setDisplayTaskForm}
+              />
+            )}
+  
+            {displayTask && (
+              <Detail
+                displayTask={displayTask}
+                setDisplayTask={setDisplayTask}
+                handleUpdateTask={handleUpdateTask}
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
+
 }

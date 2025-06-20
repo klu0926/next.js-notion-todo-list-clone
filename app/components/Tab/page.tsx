@@ -12,18 +12,18 @@ export default function Tab({
   handleAddPage: () => void
 }){
   return (
-      <div className="flex items-center gap-2 px-2 py-4 sm:px-6">
+      <div className="flex items-center gap-2 px-2 py-4 sm:px-6 flex-wrap">
         {pages.map((page) => (
           <div
           onClick={()=> setPageId(page.id)} 
            key={page.id} 
-           className={`py-1 px-2 cursor-pointer text-sm rounded-lg hover:bg-gray-300 ${pageId === page.id ? 'bg-gray-200' : ''}`}>
+           className={`py-1 px-2 cursor-pointer text-sm rounded-lg hover:bg-gray-300 ${pageId === page.id ? 'bg-gray-200' : ''} transition`}>
             {page.title}
           </div>
         ))}
         <button 
         onClick={handleAddPage}
-        className="bg-gray-200 h-6 w-6 border-gray-50 rounded-md cursor-pointer hover:bg-gray-300">
+        className="bg-gray-300 h-6 w-6 rounded-md cursor-pointer hover:bg-gray-400 transition">
           +
         </button>
       </div>
