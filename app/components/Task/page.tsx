@@ -1,17 +1,22 @@
 import { TypeTask } from "@/types/page"
 import "@/Data/colorList"
 
+interface TaskParam {
+  task: TypeTask,
+  color: string,
+  setDisplayTask: (task: TypeTask) => void
+}
+
 export default function Task({
   task,
-  color
-}: {
-  task: TypeTask,
-  color: string
-}){
+  color,
+  setDisplayTask
+}: TaskParam){
   return (
     <div 
     key={task.id} 
-    className={`border p-2 bg-white rounded-lg border-gray-200 shadow-sm cursor-pointer hover:bg-${color}-200`}>
+    onClick={() => setDisplayTask(task)}
+    className={`task border p-2 bg-white rounded-lg border-gray-200 shadow-sm cursor-pointer hover:bg-${color}-200`}>
     <p className="">
         {task.title}
       </p>

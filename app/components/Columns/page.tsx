@@ -1,18 +1,18 @@
-import { TypePage } from "@/types/page"
+import { TypePage , TypeTask} from "@/types/page"
 import Task from "../Task/page"
 
 
 interface ColumnsParam  {
   currentPage : TypePage
   handleAddTaskButtonPress: (pageId:string, columnId: string) => void
-}
+  setDisplayTask: (task : TypeTask) => void
+} 
 
 export default function Columns({
   currentPage,
-  handleAddTaskButtonPress
+  handleAddTaskButtonPress,
+  setDisplayTask
 }: ColumnsParam){
-
-
 
   return (
           <div className="overflow-x-auto">
@@ -42,6 +42,7 @@ export default function Columns({
                             key={task.id}
                             task={task}
                             color={col.color}
+                            setDisplayTask={setDisplayTask}
                           />
                         ))}
 

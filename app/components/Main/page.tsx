@@ -4,11 +4,10 @@ import List from "../List/page"
 import Detail from "../Detail/page"
 import Tab from "../Tab/page"
 import TaskForm from "../TaskForm/TaskForm"
-import { TypePages } from "@/types/page"
+import { TypePages, TypeTask } from "@/types/page"
 import { useEffect, useState } from "react"
-import { savePages, loadPages } from "@/utils/localSotrage"
-import {addPage, deletePage, updatePageTitle, addTask} from "@/utils/pagesManager"
-
+import { loadPages } from "@/utils/localSotrage"
+import {addPage, updatePageTitle, addTask} from "@/utils/pagesManager"
 
 export default function HomePage() {
   const [pages, setPages] = useState<TypePages>([])
@@ -19,6 +18,11 @@ export default function HomePage() {
   const [addColumnId, setAddColumnId] = useState('')
   const [displayTaskForm, setDisplayTaskForm] = useState(false)
 
+  // For displaying selected task (Detail)
+  const [displayTask, setDisplayTask] = useState<TypeTask|null>(null)
+
+
+  // Auto select the first page
   if (pageId === '' && pages.length > 0){
     setPageId(pages[0].id)
   }
@@ -28,10 +32,6 @@ export default function HomePage() {
     setPages(loadPages())
   }, []) 
 
-  const handleSavePages = (newPages : TypePages) => {
-    setPages(newPages)
-    savePages(newPages)
-  }
 
   const handleAddPage = ()=>{
     addPage(setPages, 'new page')
@@ -40,12 +40,6 @@ export default function HomePage() {
   const handleUpdatePageTitle = (pageId: string, newTitle: string) => {
     updatePageTitle(setPages, pageId, newTitle)
   }
-
-  const onAddTaskButtonPress = (pageId, columnId) => {
-    setPageId(pageId)
-    columnId(columnId)
-    setDisplayTaskForm(true)
-  } 
 
   const handleAddTask = ( title:string, label:string) => {
     if (addPageId === '' || addColumnId ==='')
@@ -73,10 +67,17 @@ export default function HomePage() {
             setAddPageId={setAddPageId}
             setAddColumnId={setAddColumnId}
             setDisplayTaskForm={setDisplayTaskForm}
+            setDisplayTask={setDisplayTask}
            />
         </div>
         {displayTaskForm && (<TaskForm handleAddTask={handleAddTask} setDisplayTaskForm={setDisplayTaskForm}/>)}
-        <Detail />
+        {
+          displayTask && 
+          <Detail 
+          displayTask={displayTask}
+          setDisplayTask={setDisplayTask}
+          />
+        }
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from "react"
-import { TypePage, TypePages } from "@/types/page"
+import { TypePage, TypePages , TypeTask} from "@/types/page"
 import "@/Data/colorList"
 import Columns from "../Columns/page"
 
@@ -12,6 +12,7 @@ interface ListParam {
   setAddPageId: (id : string) => void
   setAddColumnId: (id : string) => void
   setDisplayTaskForm: (on : boolean) => void
+  setDisplayTask: (task : TypeTask) => void
 }
 
 export default function List({
@@ -20,7 +21,8 @@ export default function List({
   handleUpdatePageTitle,
   setAddPageId,
   setAddColumnId,
-  setDisplayTaskForm
+  setDisplayTaskForm,
+  setDisplayTask
 }: ListParam) {
 
   const currentPage: TypePage | undefined = pages.find(page => page.id === pageId)
@@ -67,7 +69,7 @@ export default function List({
         titleRef.current.innerText = currentPage.title
         return
       }
-      if (currentPage && newTitle !== currentPage.title) {
+      if (currentPage&& newTitle && newTitle !== currentPage.title) {
         handleUpdatePageTitle(currentPage.id, newTitle)
       }
       setIsEditing(false)
@@ -101,6 +103,8 @@ export default function List({
           <Columns 
           currentPage={currentPage} 
           handleAddTaskButtonPress={handleAddTaskButtonPress}
+
+          setDisplayTask={setDisplayTask}
           />
         </div>
       )}
