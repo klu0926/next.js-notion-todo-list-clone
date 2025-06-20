@@ -11,16 +11,21 @@ import { BackspaceIcon, CalendarIcon, ArrowRightStartOnRectangleIcon } from '@he
 interface DetailParam {
   displayTask : TypeTask,
   setDisplayTask: (task : TypeTask | null) => void
+  handleUpdateTask:(title: string, label:string, description:string) => void
 }
 
 export default function Detail({
   displayTask,
-  setDisplayTask
+  setDisplayTask,
+  handleUpdateTask
 }:DetailParam){
 
 const [toggle, setToggle] = useState(true) 
-const descriptionRef = useRef<HTMLDivElement>(null)
+const [isEditing, setIsEditing] = useState(false)
 
+const titleRef = useRef<HTMLDivElement>(null)
+const labelRef= useRef<HTMLDivElement>(null)
+const descriptionRef = useRef<HTMLDivElement>(null)
 
 const hide = useCallback(() => {
   // trigger slide out animation
@@ -35,11 +40,36 @@ const hide = useCallback(() => {
 
 // load description to editable div
 useEffect(() => {
+  if (titleRef.current) {
+    titleRef.current.innerText = displayTask.title || ''
+  }
+  if (labelRef.current) {
+    labelRef.current.innerText = displayTask.label || 'Empty'
+  }
   if (descriptionRef.current) {
-    descriptionRef.current.innerText = displayTask.description || ''
+    descriptionRef.current.innerText = displayTask.description || 'Insert Text Here...'
   }
 }, [displayTask])
 
+useEffect(() => {
+  const handleClickOutside = (e: MouseEvent) => {
+    const target = e.target as Node
+
+    const clickedInside =
+      titleRef.current?.contains(target) ||
+      labelRef.current?.contains(target) ||
+      descriptionRef.current?.contains(target)
+
+    if (!clickedInside) {
+      setIsEditing(false)
+    }
+  }
+
+  document.addEventListener('mousedown', handleClickOutside)
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside)
+  }
+}, [])
 
 // Click outside to hide detail
 useEffect(() => {
@@ -56,34 +86,67 @@ useEffect(() => {
 }, [setDisplayTask, hide])
 
 
+const handleKeyDown = (e: React.KeyboardEvent<HTMLHeadingElement>) => {
+  if (e.key !== "Enter" || !isEditing)  return
+  e.preventDefault()
 
+  const title = titleRef.current?.innerText.trim() || ''
+
+  // Label (check for defaul)
+  let label = labelRef.current?.innerText.trim() ?? ''
+  label = label == 'Empty' ? '' : label
+
+  // Des (check for defaul)
+  let description = descriptionRef.current?.innerText.trim() ?? ''
+  description = description == 'Insert Text Here...' ? '' : description
+
+  if (!title){
+    alert('Cannot have empty title')
+    return
+  }
+  handleUpdateTask(title, label, description)
+  // disable edit mode
+  setIsEditing(false)
+  if (titleRef.current) titleRef.current.blur()
+  if (labelRef.current) labelRef.current.blur()
+  if (descriptionRef.current) descriptionRef.current.blur()
+
+}
 
   return(
-    <div className={`${toggle ? styles.slideIn : styles.slideOut} detail fixed top-15 right-0 w-1/2 max-w-3xl`}>
-      <div className="py-5 px-6 bg-white shadow-md border-t border-l w-full h-screen">
-            <div className="flex mb-10">
+    <div 
+    onKeyDown={handleKeyDown}
+    className={`${toggle ? styles.slideIn : styles.slideOut} detail fixed top-15 right-0 max-w-2xl w-8/10 rel `}>
+      <div className="py-5 px-6 bg-white shadow-2xl border-t border-l rounded-l-xl w-full h-screen relative">
+            <div className="flex mb-6">
               <div 
                 onClick={hide}
                 className="p-1 rounded hover:bg-gray-200 cursor-pointer">
               <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
               </div>
 
+              {isEditing &&(<span className="text-sm text-white bg-red-400 py-0.5 px-2 rounded animate-pulse absolute top-5 left-16">Press Enter To Save</span>)}
+
             </div>
             <div className="px-8">
-            <h1 className="font-bold text-4xl mb-4">
-              {displayTask.title}
-            </h1>
-            <div className="flex flex-col gap-2">
+              {/* title  */}
+            <div 
+                ref={titleRef}
+                contentEditable={true}
+                onClick={() => setIsEditing(true)}
+                 className="title font-bold text-4xl mb-4 focus:outline-0 focus:bg-gray-200 px-2 rounded">
+            </div>
+            <div className="flex flex-col gap-2 px-2">
               <div className="flex gap-4 items-center">
                 <div className="flex gap-2 items-center text-gray-500 min-w-20">
                   <BackspaceIcon className="w-5 h-5" />
                   Label
                 </div>
-                <div className="min-w-20 min-h-7 px-2 flex items-center hover:bg-gray-200">
-                  {displayTask.label ?
-                  displayTask.label : 
-                  'Empty'  
-                  }
+                <div 
+                 ref={labelRef}
+                  contentEditable={true}
+                  onClick={() => setIsEditing(true)}
+                  className={`w-full min-h-7 px-2 flex items-center hover:bg-gray-200 focus:outline-0 focus:bg-gray-200 rounded `}>   
                   </div>
               </div>
 
@@ -92,7 +155,9 @@ useEffect(() => {
                   <CalendarIcon className="w-5 h-5" />
                   Date
                 </div>
-                <div className="min-w-20 min-h-7 px-2 flex items-center hover:bg-gray-200">
+                <div 
+                className="w-full min-h-7 px-2 flex items-center hover:bg-gray-200 rounded"
+                >
                   {displayTask.date ?
                   new Date(displayTask.date).toLocaleDateString() : 
                   'Empty'  
@@ -103,7 +168,8 @@ useEffect(() => {
               <div 
                   contentEditable={true}
                   ref={descriptionRef}
-                  className="description w-full min-h-40 p-2  whitespace-pre-wrap focus:outline-0 focus:bg-gray-100 rounded-md"
+                  onClick={() => setIsEditing(true)}
+                  className={`description w-full min-h-40 p-2  whitespace-pre-wrap focus:outline-0 focus:bg-gray-100 rounded-md `}
                   >
               </div>
 

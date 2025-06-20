@@ -77,19 +77,19 @@ export default function List({
   }
 
   return (
-    <div className="px-1 sm:px-4 w-full min-h-150 mx-auto">
+    <div className="px-1 sm:px-4 w-full mx-auto">
       {!currentPage ? (
         <div className="h-full flex flex-col justify-center items-center">
           Loading...
         </div>
       ) : (
         <div className="p-4 relative">
-          {isEditing &&(<span className="text-sm text-white bg-gray-400 py-0.5 px-2 rounded animate-pulse absolute top-1">Hit Enter To Save Title</span>)}
+          {isEditing &&(<span className="text-sm text-white bg-red-400 py-0.5 px-2 rounded animate-pulse absolute top-1">Press Enter To Save</span>)}
           <h1
             ref={titleRef}
             contentEditable={true}
             suppressContentEditableWarning={true}
-            className={`p-1 text-4xl font-bold mt-4 mb-6 focus:outline-none rounded-md ${isEditing && 'bg-gradient-to-r from-gray-200 to-white'}`}
+            className={`p-1 text-4xl font-bold mt-6 mb-6 focus:outline-none rounded-md ${isEditing && 'bg-gradient-to-r from-gray-200 to-white'}`}
             onClick={() => {
               setIsEditing(true)
               if (titleRef.current) titleRef.current.focus()

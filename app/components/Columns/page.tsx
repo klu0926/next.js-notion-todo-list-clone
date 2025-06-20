@@ -16,12 +16,12 @@ export default function Columns({
 
   return (
           <div className="overflow-x-auto">
-              <div className="flex gap-4 flex-nowrap w-max overflow-x-auto">
+              <div className="flex gap-4 flex-nowrap w-max overflow-x-auto items-start py-2">
                   {/* Columns */}
                   {currentPage.columns.map((col) => (
                     <div
                       key={col.id}
-                      className={`flex-shrink-0 w-72 rounded-lg p-3 bg-${col.color}-50 shadow-md border border-gray-100`}
+                      className={`w-72 rounded-lg p-3 bg-${col.color}-50 shadow-md border border-gray-100`}
                     >
                       {/* Column header */}
                       <div className="flex justify-between">

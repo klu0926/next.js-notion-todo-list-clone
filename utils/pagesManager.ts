@@ -1,9 +1,6 @@
-import { TypePages, TypePage, TypeColumn, TypeTask } from "@/types/page";
+import { TypePages, TypePage, TypeTask } from "@/types/page";
 import { loadPages, savePages } from "./localSotrage";
 import { generateID } from "./generateId";
-import Columns from "@/app/components/Columns/page";
-import { title } from "process";
-
 
 // PAGES ----------
 // Each function takes in the setPages funciton from Main.tsx
@@ -60,9 +57,6 @@ export function updatePageTitle(
 
 
 // Task ----------
-
-// which page?
-// which column?
 export function addTask(
   setPages: (pages: TypePages) => void, 
   pageId: string, 
@@ -102,4 +96,45 @@ export function addTask(
     // Save to storage and update
     savePages(updated)
     setPages(updated)
+}
+
+
+export function updateTask(
+  setPages: (pages: TypePages) => void,
+  pageId: string,
+  columnId: string,
+  taskId: string,
+  updatedFields: {
+    title?: string
+    label?: string
+    description?: string
+  }
+) {
+  const pages: TypePages = loadPages()
+
+  const updated = pages.map(page => {
+    if (page.id !== pageId) return page
+
+    return {
+      ...page,
+      columns: page.columns.map(col => {
+        if (col.id !== columnId) return col
+
+        return {
+          ...col,
+          tasks: col.tasks.map(task => {
+            if (task.id !== taskId) return task
+
+            return {
+              ...task,
+              ...updatedFields
+            }
+          })
+        }
+      })
+    }
+  })
+
+  savePages(updated)
+  setPages(updated)
 }

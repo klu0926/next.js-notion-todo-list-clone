@@ -7,7 +7,8 @@ import TaskForm from "../TaskForm/TaskForm"
 import { TypePages, TypeTask } from "@/types/page"
 import { useEffect, useState } from "react"
 import { loadPages } from "@/utils/localSotrage"
-import {addPage, updatePageTitle, addTask} from "@/utils/pagesManager"
+import {addPage, updatePageTitle, addTask, updateTask} from "@/utils/pagesManager"
+import {findTaskLocation} from "@/utils/findTaskLocation"
 
 export default function HomePage() {
   const [pages, setPages] = useState<TypePages>([])
@@ -20,7 +21,6 @@ export default function HomePage() {
 
   // For displaying selected task (Detail)
   const [displayTask, setDisplayTask] = useState<TypeTask|null>(null)
-
 
   // Auto select the first page
   if (pageId === '' && pages.length > 0){
@@ -50,6 +50,30 @@ export default function HomePage() {
     addTask(setPages, addPageId, addColumnId, title, label)
   }
 
+  const handleUpdateTask = (title:string, label:string | '', description: string | '') => {
+
+    let locationObject = null
+    if (displayTask){
+      locationObject = findTaskLocation(pages, displayTask?.id)
+    } else {
+      alert('Cannot find current display task')
+      return
+    }
+
+    if (!locationObject){
+      alert('Cannot find task within pages')
+      return
+    }
+
+    const {pageId, columnId} = locationObject
+
+    if (displayTask){
+      updateTask(setPages, pageId, columnId, displayTask?.id ,{
+        title, label, description
+      } )
+    }
+  }
+
   return (
     <div className="min-h-screen">
         <Tab
@@ -74,8 +98,9 @@ export default function HomePage() {
         {
           displayTask && 
           <Detail 
-          displayTask={displayTask}
-          setDisplayTask={setDisplayTask}
+            displayTask={displayTask}
+            setDisplayTask={setDisplayTask}
+            handleUpdateTask={handleUpdateTask}
           />
         }
       </div>
