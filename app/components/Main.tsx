@@ -1,9 +1,9 @@
 'use client'
 
-import List from "../List/page"
-import Detail from "../Detail/page"
-import Tab from "../Tab/page"
-import TaskForm from "../TaskForm/TaskForm"
+import List from "./List"
+import Detail from "./Detail/Detail"
+import Tab from "./Tab"
+import TaskForm from "./TaskForm"
 import { TypePages, TypeTask } from "@/types/page"
 import { useEffect, useState } from "react"
 import { loadPages } from "@/utils/localSotrage"

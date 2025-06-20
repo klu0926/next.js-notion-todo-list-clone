@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { TypePage, TypePages , TypeTask} from "@/types/page"
 import "@/Data/colorList"
-import Columns from "../Columns/page"
+import Columns from "./Columns"
 
 // Heroicon
 import { EyeIcon } from '@heroicons/react/24/outline'

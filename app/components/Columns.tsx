@@ -1,5 +1,5 @@
 import { TypeColumn, TypePage, TypeTask } from "@/types/page"
-import Task from "../Task/page"
+import Task from "./Task"
 
 interface ColumnsParam {
   currentPage: TypePage
