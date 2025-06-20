@@ -10,6 +10,7 @@ import { loadPages } from "@/utils/localSotrage"
 import {addPage, updatePageTitle, addTask, updateTask} from "@/utils/pagesManager"
 import {findTaskLocation} from "@/utils/findTaskLocation"
 
+
 export default function HomePage() {
   const [pages, setPages] = useState<TypePages>([])
   const [pageId, setPageId] = useState('')
@@ -18,6 +19,9 @@ export default function HomePage() {
   const [addPageId, setAddPageId] = useState('')
   const [addColumnId, setAddColumnId] = useState('')
   const [displayTaskForm, setDisplayTaskForm] = useState(false)
+
+  // For filter
+  const [filterColumnId, setFilterColumnId] = useState<string[]>([])
 
   // For displaying selected task (Detail)
   const [displayTask, setDisplayTask] = useState<TypeTask|null>(null)
@@ -31,7 +35,6 @@ export default function HomePage() {
   useEffect(() => {
     setPages(loadPages())
   }, []) 
-
 
   const handleAddPage = ()=>{
     addPage(setPages, 'new page')
@@ -73,6 +76,8 @@ export default function HomePage() {
       } )
     }
   }
+
+
 
   return (
     <div className="min-h-screen">

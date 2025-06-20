@@ -125,7 +125,7 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLHeadingElement>) => {
               <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
               </div>
 
-              {isEditing &&(<span className="text-sm text-white bg-red-400 py-0.5 px-2 rounded animate-pulse absolute top-5 left-16">Press Enter To Save</span>)}
+              {isEditing &&(<span className="text-sm text-white bg-yellow-500 py-0.5 px-2 rounded animate-pulse absolute top-5 left-16">Press Enter To Save</span>)}
 
             </div>
             <div className="px-8">

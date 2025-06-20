@@ -1,15 +1,17 @@
-import { TypePage , TypeTask} from "@/types/page"
+import { TypeColumn , TypePage, TypeTask} from "@/types/page"
 import Task from "../Task/page"
 
 
 interface ColumnsParam  {
-  currentPage : TypePage
+  currentPage: TypePage
+  filteredColumns : TypeColumn[]
   handleAddTaskButtonPress: (pageId:string, columnId: string) => void
   setDisplayTask: (task : TypeTask) => void
 } 
 
 export default function Columns({
   currentPage,
+  filteredColumns,
   handleAddTaskButtonPress,
   setDisplayTask
 }: ColumnsParam){
@@ -18,7 +20,7 @@ export default function Columns({
           <div className="overflow-x-auto">
               <div className="flex gap-4 flex-nowrap w-max overflow-x-auto items-start py-2">
                   {/* Columns */}
-                  {currentPage.columns.map((col) => (
+                  {filteredColumns.map((col) => (
                     <div
                       key={col.id}
                       className={`w-72 rounded-lg p-3 bg-${col.color}-50 shadow-md border border-gray-100`}
