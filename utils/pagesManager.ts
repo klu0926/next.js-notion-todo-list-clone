@@ -138,3 +138,31 @@ export function updateTask(
   savePages(updated)
   setPages(updated)
 }
+
+export function deleteTask(
+  setPages: (pages: TypePages) => void, 
+  pageId: string, 
+  columnId: string,
+  taskId: string
+){
+
+  const pages: TypePages = loadPages()
+  const updated = pages.map(page => {
+    if (page.id !== pageId) return page
+
+    return {
+      ...page,
+      columns: page.columns.map(col => {
+        if (col.id !== columnId) return col
+
+        return {
+          ...col,
+          tasks: col.tasks.filter(task => task.id !== taskId)
+        }
+      })
+    }
+  })
+  
+  savePages(updated)
+  setPages(updated)
+}

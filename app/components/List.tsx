@@ -17,6 +17,7 @@ interface ListParam {
   setAddColumnId: (id : string) => void
   setDisplayTaskForm: (on : boolean) => void
   setDisplayTask: (task : TypeTask) => void
+  setDisplayColumnId: (columnId : string) => void
 }
 
 export default function List({
@@ -26,7 +27,8 @@ export default function List({
   setAddPageId,
   setAddColumnId,
   setDisplayTaskForm,
-  setDisplayTask
+  setDisplayTask,
+  setDisplayColumnId
 }: ListParam) {
 
 
@@ -188,6 +190,7 @@ export default function List({
                  filteredColumns={filteredColumns} 
                  handleAddTaskButtonPress={handleAddTaskButtonPress}
                  setDisplayTask={setDisplayTask}
+                 setDisplayColumnId={setDisplayColumnId}
                />
             )}
         </div>

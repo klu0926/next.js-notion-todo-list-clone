@@ -6,18 +6,22 @@ import styles from './slideIn.module.css'
 
 // Heroicon
 import { BackspaceIcon, CalendarIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/solid'
-
+import { TrashIcon } from '@heroicons/react/24/outline'
 
 interface DetailParam {
-  displayTask : TypeTask,
+  displayColumnId: string
+  displayTask : TypeTask
   setDisplayTask: (task : TypeTask | null) => void
-  handleUpdateTask:(title: string, label:string, description:string) => void
+  handleUpdateTask:(title: string, label:string,description:string) => void
+  handleDeleteTask: () => void
 }
 
 export default function Detail({
+  displayColumnId,
   displayTask,
   setDisplayTask,
-  handleUpdateTask
+  handleUpdateTask,
+  handleDeleteTask
 }:DetailParam){
 
 const [toggle, setToggle] = useState(true) 
@@ -110,7 +114,12 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLHeadingElement>) => {
   if (titleRef.current) titleRef.current.blur()
   if (labelRef.current) labelRef.current.blur()
   if (descriptionRef.current) descriptionRef.current.blur()
+}
 
+
+const hideAndDeleteTask = () => {
+  hide()
+  handleDeleteTask()
 }
 
   return(
@@ -119,10 +128,19 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLHeadingElement>) => {
     className={`${toggle ? styles.slideIn : styles.slideOut} detail fixed top-15 right-0 max-w-2xl w-8/10 rel `}>
       <div className="py-5 px-6 bg-white shadow-2xl border-t border-l rounded-l-xl w-full h-screen relative">
             <div className="flex mb-6">
+
+              {/* Hide */}
               <div 
                 onClick={hide}
                 className="p-1 rounded hover:bg-gray-200 cursor-pointer">
               <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
+              </div>
+
+              {/* Delete */}
+              <div 
+                onClick={hideAndDeleteTask}
+                className="p-1 rounded hover:bg-gray-200 cursor-pointer">
+              <TrashIcon className="w-5 h-5" />
               </div>
 
               {isEditing &&(<span className="text-sm text-white bg-yellow-500 py-0.5 px-2 rounded animate-pulse absolute top-5 left-16">Press Enter To Save</span>)}

@@ -6,13 +6,15 @@ interface ColumnsParam {
   filteredColumns: TypeColumn[]
   handleAddTaskButtonPress: (pageId: string, columnId: string) => void
   setDisplayTask: (task: TypeTask) => void
+  setDisplayColumnId: (columnId: string) => void
 }
 
 export default function Columns({
   currentPage,
   filteredColumns,
   handleAddTaskButtonPress,
-  setDisplayTask
+  setDisplayTask, 
+  setDisplayColumnId
 }: ColumnsParam) {
   const isEmpty = filteredColumns.length === 0
 
@@ -48,9 +50,11 @@ export default function Columns({
                   {col.tasks.map((task) => (
                     <Task
                       key={task.id}
+                      columnId={col.id}
                       task={task}
                       color={col.color}
                       setDisplayTask={setDisplayTask}
+                      setDisplayColumnId={setDisplayColumnId}
                     />
                   ))}
 

@@ -7,7 +7,7 @@ import TaskForm from "./TaskForm"
 import { TypePages, TypeTask } from "@/types/page"
 import { useEffect, useState } from "react"
 import { loadPages } from "@/utils/localSotrage"
-import {addPage, updatePageTitle, addTask, updateTask} from "@/utils/pagesManager"
+import {addPage, deletePage, updatePageTitle, addTask, updateTask, deleteTask} from "@/utils/pagesManager"
 import {findTaskLocation} from "@/utils/findTaskLocation"
 
 
@@ -21,6 +21,7 @@ export default function HomePage() {
   const [displayTaskForm, setDisplayTaskForm] = useState(false)
 
   // For displaying selected task (Detail)
+  const [displayColumnId, setDisplayColumnId] = useState('')
   const [displayTask, setDisplayTask] = useState<TypeTask|null>(null)
 
   // Auto select the first page
@@ -51,7 +52,6 @@ export default function HomePage() {
   }
 
   const handleUpdateTask = (title:string, label:string | '', description: string | '') => {
-
     let locationObject = null
     if (displayTask){
       locationObject = findTaskLocation(pages, displayTask?.id)
@@ -70,6 +70,12 @@ export default function HomePage() {
       updateTask(setPages, pageId, columnId, displayTask?.id ,{
         title, label, description
       } )
+    }
+  }
+
+  const handleDeleteTask = () => {
+    if (displayTask){
+      deleteTask(setPages, pageId, displayColumnId, displayTask.id)
     }
   }
 
@@ -97,6 +103,7 @@ export default function HomePage() {
                 setAddColumnId={setAddColumnId}
                 setDisplayTaskForm={setDisplayTaskForm}
                 setDisplayTask={setDisplayTask}
+                setDisplayColumnId={setDisplayColumnId}
               />
             </div>
   
@@ -109,9 +116,11 @@ export default function HomePage() {
   
             {displayTask && (
               <Detail
+              displayColumnId={displayColumnId}
                 displayTask={displayTask}
                 setDisplayTask={setDisplayTask}
                 handleUpdateTask={handleUpdateTask}
+                handleDeleteTask={handleDeleteTask}
               />
             )}
           </div>
