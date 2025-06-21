@@ -87,12 +87,9 @@ export default function HomePage() {
     }
   }
 
-
-
-
   return (
     <div className="min-h-screen">
-      {pages.length === 0 ? (
+      {!pages ? (
         <div className="fixed inset-0 flex items-center justify-center text-gray-500 animate-pulse">
         <span className="animate text-3xl font-bold">Loading Data Plese Wait.</span>
         </div>
