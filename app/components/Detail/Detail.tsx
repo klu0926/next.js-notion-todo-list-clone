@@ -3,13 +3,13 @@
 import { useEffect, useState, useRef, useCallback } from "react"
 import { TypeTask } from "@/types/page"
 import styles from './slideIn.module.css'
+import ConfirmModal from "../ComfirmModal"
 
 // Heroicon
 import { BackspaceIcon, CalendarIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/solid'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 interface DetailParam {
-  displayColumnId: string
   displayTask : TypeTask
   setDisplayTask: (task : TypeTask | null) => void
   handleUpdateTask:(title: string, label:string,description:string) => void
@@ -17,7 +17,6 @@ interface DetailParam {
 }
 
 export default function Detail({
-  displayColumnId,
   displayTask,
   setDisplayTask,
   handleUpdateTask,
@@ -26,10 +25,13 @@ export default function Detail({
 
 const [toggle, setToggle] = useState(true) 
 const [isEditing, setIsEditing] = useState(false)
+const [showConfirm, setShowConfirm] =useState(false)
+const [confirmTitle, setConfirmTitle] = useState('')
 
 const titleRef = useRef<HTMLDivElement>(null)
 const labelRef= useRef<HTMLDivElement>(null)
 const descriptionRef = useRef<HTMLDivElement>(null)
+const confirmRef = useRef<HTMLDialogElement>(null)
 
 const hide = useCallback(() => {
   // trigger slide out animation
@@ -57,12 +59,12 @@ useEffect(() => {
 
 useEffect(() => {
   const handleClickOutside = (e: MouseEvent) => {
-    const target = e.target as Node
+    const target = e.target as HTMLElement
 
     const clickedInside =
       titleRef.current?.contains(target) ||
       labelRef.current?.contains(target) ||
-      descriptionRef.current?.contains(target)
+      descriptionRef.current?.contains(target) 
 
     if (!clickedInside) {
       setIsEditing(false)
@@ -81,9 +83,15 @@ useEffect(() => {
     const target = e.target as HTMLElement
 
     // check if clicking not on task and detail page
-    if (!target.closest('.task') && !target.closest('.detail')) {
+    const clickedInside = 
+    target.closest('.task') ||
+    target.closest('.detail') ||
+    target.closest('.confirm-modal')
+    
+    if (!clickedInside){
       hide()
     }
+
   }
   document.addEventListener('mousedown', handleClick)
   return () => document.removeEventListener('mousedown', handleClick)
@@ -116,31 +124,43 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLHeadingElement>) => {
   if (descriptionRef.current) descriptionRef.current.blur()
 }
 
-
 const hideAndDeleteTask = () => {
+  setShowConfirm(false)
   hide()
   handleDeleteTask()
 }
 
   return(
+    <>
+    {
+      showConfirm &&  
+      <ConfirmModal
+      title={confirmTitle}
+      onConfirm={hideAndDeleteTask}
+      onClose={() => setShowConfirm(false)}
+      />
+    }
     <div 
     onKeyDown={handleKeyDown}
     className={`${toggle ? styles.slideIn : styles.slideOut} detail fixed top-15 right-0 max-w-2xl w-8/10 rel `}>
       <div className="py-5 px-6 bg-white shadow-2xl border-t border-l rounded-l-xl w-full h-screen relative">
-            <div className="flex mb-6">
+            <div className="flex mb-6 gap-2">
 
               {/* Hide */}
               <div 
                 onClick={hide}
                 className="p-1 rounded hover:bg-gray-200 cursor-pointer">
-              <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
+                  <ArrowRightStartOnRectangleIcon className="w-5 h-5" />
               </div>
 
               {/* Delete */}
               <div 
-                onClick={hideAndDeleteTask}
+                onClick={() => {
+                  setConfirmTitle('Delete Task?')
+                  setShowConfirm(true)
+                }}
                 className="p-1 rounded hover:bg-gray-200 cursor-pointer">
-              <TrashIcon className="w-5 h-5" />
+                  <TrashIcon className="w-5 h-5" />
               </div>
 
               {isEditing &&(<span className="text-sm text-white bg-yellow-500 py-0.5 px-2 rounded animate-pulse absolute top-5 left-16">Press Enter To Save</span>)}
@@ -195,6 +215,7 @@ const hideAndDeleteTask = () => {
             </div>
           </div>
     </div>
+    </>
   )
 }
 

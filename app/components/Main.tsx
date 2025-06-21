@@ -116,7 +116,6 @@ export default function HomePage() {
   
             {displayTask && (
               <Detail
-              displayColumnId={displayColumnId}
                 displayTask={displayTask}
                 setDisplayTask={setDisplayTask}
                 handleUpdateTask={handleUpdateTask}
