@@ -34,6 +34,8 @@ export default function HomePage() {
     setPages(loadPages())
   }, []) 
 
+
+  // Page ------------------------
   const handleAddPage = ()=>{
     addPage(setPages, 'new page')
   }
@@ -42,6 +44,12 @@ export default function HomePage() {
     updatePageTitle(setPages, pageId, newTitle)
   }
 
+  const handleDeletePage = (pageId:string)=> {
+    deletePage(setPages, pageId)
+  }
+
+
+  // Task -----------------------
   const handleAddTask = ( title:string, label:string) => {
     if (addPageId === '' || addColumnId ==='')
     {
@@ -79,6 +87,9 @@ export default function HomePage() {
     }
   }
 
+
+
+
   return (
     <div className="min-h-screen">
       {pages.length === 0 ? (
@@ -98,12 +109,14 @@ export default function HomePage() {
               <List
                 pages={pages}
                 pageId={pageId}
+                setPageId={setPageId}
                 handleUpdatePageTitle={handleUpdatePageTitle}
                 setAddPageId={setAddPageId}
                 setAddColumnId={setAddColumnId}
                 setDisplayTaskForm={setDisplayTaskForm}
                 setDisplayTask={setDisplayTask}
                 setDisplayColumnId={setDisplayColumnId}
+                handleDeletePage={handleDeletePage}
               />
             </div>
   

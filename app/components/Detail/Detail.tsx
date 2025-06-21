@@ -31,7 +31,6 @@ const [confirmTitle, setConfirmTitle] = useState('')
 const titleRef = useRef<HTMLDivElement>(null)
 const labelRef= useRef<HTMLDivElement>(null)
 const descriptionRef = useRef<HTMLDivElement>(null)
-const confirmRef = useRef<HTMLDialogElement>(null)
 
 const hide = useCallback(() => {
   // trigger slide out animation
@@ -163,7 +162,7 @@ const hideAndDeleteTask = () => {
                   <TrashIcon className="w-5 h-5" />
               </div>
 
-              {isEditing &&(<span className="text-sm text-white bg-yellow-500 py-0.5 px-2 rounded animate-pulse absolute top-5 left-16">Press Enter To Save</span>)}
+              {isEditing &&(<span className="text-sm text-white bg-yellow-500 py-0.5 px-2 rounded animate-pulse absolute top-5 left-25">Press Enter To Save</span>)}
 
             </div>
             <div className="px-8">

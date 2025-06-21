@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from "react"
+
 
 interface ConfirmModalProps {
   title: string
@@ -8,6 +10,23 @@ interface ConfirmModalProps {
 }
 
 export default function ConfirmModal({ title = 'Confirm Title', onConfirm, onClose }: ConfirmModalProps) {
+
+  // Click outside the modal will trigger onClose() callback
+  useEffect(() => {
+    const handleClickOutside = (e : MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (target.classList.contains('confirm-modal')){
+        if (typeof onClose === 'function') {
+          onClose()
+        } 
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [onClose]) 
+
   return (
     <div className="confirm-modal fixed inset-0 flex items-center justify-center bg-black/10 bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl text-center">

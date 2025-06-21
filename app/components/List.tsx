@@ -4,31 +4,37 @@ import { useState, useRef, useEffect } from "react"
 import { TypePage, TypePages , TypeTask} from "@/types/page"
 import "@/Data/colorList"
 import Columns from "./Columns"
+import ConfirmModal from "./ComfirmModal"
 
 // Heroicon
 import { EyeIcon } from '@heroicons/react/24/outline'
+import { TrashIcon } from '@heroicons/react/24/outline'
 
 
 interface ListParam {
   pages: TypePages
   pageId: string
+  setPageId: (pageId: string)=>void
   handleUpdatePageTitle: (pageId: string, newTitle: string) => void
   setAddPageId: (id : string) => void
   setAddColumnId: (id : string) => void
   setDisplayTaskForm: (on : boolean) => void
   setDisplayTask: (task : TypeTask) => void
   setDisplayColumnId: (columnId : string) => void
+  handleDeletePage:(pageId : string) => void
 }
 
 export default function List({
   pages,
   pageId,
+  setPageId,
   handleUpdatePageTitle,
   setAddPageId,
   setAddColumnId,
   setDisplayTaskForm,
   setDisplayTask,
-  setDisplayColumnId
+  setDisplayColumnId,
+  handleDeletePage
 }: ListParam) {
 
 
@@ -37,6 +43,10 @@ export default function List({
   const [showFilter, setShowFilter] = useState(false)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const filterSelectorRef = useRef<HTMLDivElement>(null)
+
+  // Confirm Modal
+  const [showConfirm, setShowConfirm] =useState(false)
+  const [confirmTitle, setConfirmTitle] = useState('')
 
   const currentPage: TypePage | undefined = pages.find(page => page.id === pageId)
 
@@ -130,11 +140,40 @@ export default function List({
     } else {
       update = [...filterColumnId, colmnId]
     }
-
     setFilterColumnId(update)
   } 
 
+
+  const onConfirmDeletePage = () =>{
+    setShowConfirm(false)
+
+    // move to next pge
+    const index = pages.findIndex(page => page.id === pageId)
+    let newIndex = 0
+    if (index > 0) {
+      newIndex = index - 1
+    } else if (index === 0 && pages.length > 1) {
+      newIndex = 1 
+    }
+
+     // Set new pageId if a valid one exists
+    if (pages[newIndex] && pages[newIndex].id !== pageId) {
+    setPageId(pages[newIndex].id)
+    }
+    
+    handleDeletePage(pageId)
+  }
+
   return (
+ <>
+    {
+      showConfirm &&  
+      <ConfirmModal
+      title={confirmTitle}
+      onConfirm={onConfirmDeletePage}
+      onClose={() => setShowConfirm(false)}
+      />
+    }
     <div className="px-1 sm:px-4 w-full mx-auto">
         <div className="p-4 relative">
           {isEditing &&(<span className="text-sm text-white bg-yellow-500 py-0.5 px-2 rounded animate-pulse absolute top-1">Press Enter To Save</span>)}
@@ -154,20 +193,22 @@ export default function List({
             {currentPage && (currentPage.title)}
           </h1>
 
-          {/* filter */}
-          <div className="relative flex flex-col items-start px-1 mb-2">
+          {/* Top tool bar */}
+          <div className="flex gap-2 items-center mb-2">
+            {/* filter */}
+           <div className="relative flex flex-col px-1 ">
             <button 
             onClick={() =>setShowFilter(!showFilter)}
-            className={`bg-gray-200 px-2 rounded-md flex gap-2 items-center  ${showFilter ? 'bg-yellow-200 hover:bg-yellow-300' : 'bg-gray-200 hover:bg-gray-300'}` }
+            className={`bg-gray-200 py-1 px-3 rounded-md flex gap-2 items-center  ${showFilter ? 'bg-yellow-200 hover:bg-yellow-300' : 'bg-gray-200 hover:bg-gray-300'}` }
             >
               <span className="">Filter</span>
-              <EyeIcon className="h-4 w-4" />
+              <EyeIcon className="h-6 w-5" />
             </button>
 
             {showFilter &&
             <div 
             ref={filterSelectorRef}
-            className="absolute top-8 border border-gray-300 w-fit rounded-md shadow-lg bg-white">
+            className="absolute top-10 border border-gray-300 w-fit rounded-md shadow-lg bg-white">
               <div className="p-2 flex flex-col gap-1">
               {currentColumns.map(col => (
               <div
@@ -182,6 +223,16 @@ export default function List({
                </div>
             </div>
             }
+            </div>
+              {/* Delete page */}
+              <div 
+                onClick={() => {
+                    setConfirmTitle('Delete Page?')
+                    setShowConfirm(true)
+                }}
+                className="p-1 rounded bg-gray-200 hover:bg-gray-300 cursor-pointer">
+                  <TrashIcon className="h-5 w-5" />
+                </div>
           </div>
 
             {currentPage && (
@@ -195,5 +246,6 @@ export default function List({
             )}
         </div>
     </div>
+    </>
   )
 }
