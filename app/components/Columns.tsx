@@ -1,4 +1,4 @@
-import { TypeColumn, TypePage, TypeTask, ColorEnum } from "@/types/page"
+import { TypeColumn, TypePage, TypeTask } from "@/types/page"
 import Task from "./Task"
 import "@/Data/colorList"
 
@@ -12,7 +12,6 @@ interface ColumnsParam {
   setDisplayTask: (task: TypeTask) => void
   setDisplayColumnId: (columnId: string) => void
   handleDeleteColumn: (columnId: string) => void
-  handleUpdateColumn: (columnId: string, title:string, color: ColorEnum) => void
   handleConfirmDisplay: (title:string, callback: () => void) => void
 }
 
@@ -23,7 +22,6 @@ export default function Columns({
   setDisplayTask, 
   setDisplayColumnId,
   handleDeleteColumn,
-  // handleUpdateColumn,
   handleConfirmDisplay
 }: ColumnsParam) {
   const isEmpty = filteredColumns.length === 0

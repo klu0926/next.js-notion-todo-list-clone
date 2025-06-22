@@ -22,7 +22,6 @@ interface ListParam {
   handleDeletePage: (pageId: string) => void
   handleAddColumn: (title: string, color: ColorEnum) => void
   handleDeleteColumn: (columnId: string) => void
-  handleUpdateColumn: (columnId: string, title: string, color: ColorEnum) => void
 }
 
 export default function List({
@@ -38,7 +37,6 @@ export default function List({
   handleDeletePage,
   handleAddColumn,
   handleDeleteColumn,
-  handleUpdateColumn
 }: ListParam) {
   const [isEditing, setIsEditing] = useState(false)
   const [filterColumnId, setFilterColumnId] = useState<string[]>([])
@@ -270,7 +268,6 @@ export default function List({
                   setDisplayTask={setDisplayTask}
                   setDisplayColumnId={setDisplayColumnId}
                   handleDeleteColumn={handleDeleteColumn}
-                  handleUpdateColumn={handleUpdateColumn}
                   handleConfirmDisplay={handleConfirmDisplay}
                 />
               )}
