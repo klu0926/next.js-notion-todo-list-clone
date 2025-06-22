@@ -1,7 +1,3 @@
-export const colorList : string[] = [
-  'gray', 'blue', 'red', 'green', 'purple','yellow'
-]
-
 const tailwindColorClasses: string[] = [
   // Gray
   'bg-gray-50','bg-gray-100','bg-gray-200', 'bg-gray-300', 'bg-gray-400', 'bg-gray-500',
@@ -31,11 +27,9 @@ const tailwindColorClasses: string[] = [
   'hover:bg-purple-200',
 
   // Yellow
-'bg-yellow-50','bg-yellow-100','bg-yellow-200','bg-yellow-300', 'bg-yellow-400', 'bg-yellow-500',
-'text-yellow-100', 'text-yellow-300', 'text-yellow-400', 'text-yellow-500',
-'hover:bg-yellow-200',
-
-
+  'bg-yellow-50','bg-yellow-100','bg-yellow-200','bg-yellow-300', 'bg-yellow-400', 'bg-yellow-500',
+  'text-yellow-100', 'text-yellow-300', 'text-yellow-400', 'text-yellow-500',
+  'hover:bg-yellow-200',
 ];
 
 export default tailwindColorClasses;

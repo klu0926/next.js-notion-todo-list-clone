@@ -1,4 +1,4 @@
-import { TypePages } from '@/types/page'
+import { TypePages, ColorEnum } from '@/types/page'
 
 // Default Pages is basically just a single page
 export const defaultPages: TypePages = [
@@ -11,7 +11,7 @@ export const defaultPages: TypePages = [
         id: 'poadd0w-cmpawomdao',
         title: 'Not started',
         order: 0,
-        color: 'gray',
+        color: ColorEnum.Gray,
         tasks: [
           {
             id: 'adadadaakdopa0wdad',
@@ -35,7 +35,7 @@ export const defaultPages: TypePages = [
         id: 'opkadkopdkaopdk',
         title: 'In Progress',
         order: 1,
-        color: 'blue',
+        color: ColorEnum.Blue,
         tasks: [
           {
             id: 'adadfaf',
@@ -51,14 +51,14 @@ export const defaultPages: TypePages = [
         id: 'adpowkdokawdoa',
         title: 'Done',
         order: 2,
-        color: 'green',
+        color: ColorEnum.Green,
         tasks: []
       },
       {
         id: 'dadadada',
         title: 'Other',
         order: 3,
-        color: 'yellow',
+        color: ColorEnum.Yellow,
         tasks: []
       }
     ]
@@ -72,7 +72,7 @@ export const defaultPages: TypePages = [
         id: 'lmdkaowdkopkofpkaod',
         title: 'Not started',
         order: 0,
-        color: 'gray',
+        color: ColorEnum.Gray,
         tasks: [
           {
             id: 'awpodaopdkopakdpoa',
@@ -96,14 +96,14 @@ export const defaultPages: TypePages = [
         id: 'awdmpioadkpaowkd',
         title: 'In Progress',
         order: 1,
-        color: 'blue',
+        color: ColorEnum.Blue,
         tasks: []
       },
       {
         id: 'adkakdpokpowadkp',
         title: 'Completed',
         order: 2,
-        color: 'green',
+        color: ColorEnum.Green,
         tasks: []
       }
     ]

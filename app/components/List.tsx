@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useRef, useEffect } from "react"
-import { TypePage, TypePages , TypeTask } from "@/types/page"
+import { ColorEnum, TypePage, TypePages, TypeTask } from "@/types/page"
 import "@/Data/colorList"
 import Columns from "./Columns"
 import ConfirmModal from "./ComfirmModal"
-
-// Heroicon
+import ColumnForm from "./ColumnForm"
 import { EyeIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PlusIcon } from '@heroicons/react/24/solid'
 
 interface ListParam {
   pages: TypePages
@@ -20,6 +20,9 @@ interface ListParam {
   setDisplayTask: (task: TypeTask) => void
   setDisplayColumnId: (columnId: string) => void
   handleDeletePage: (pageId: string) => void
+  handleAddColumn: (title: string, color: ColorEnum) => void
+  handleDeleteColumn: (columnId: string) => void
+  handleUpdateColumn: (columnId: string, title: string, color: ColorEnum) => void
 }
 
 export default function List({
@@ -32,24 +35,30 @@ export default function List({
   setDisplayTaskForm,
   setDisplayTask,
   setDisplayColumnId,
-  handleDeletePage
+  handleDeletePage,
+  handleAddColumn,
+  handleDeleteColumn,
+  handleUpdateColumn
 }: ListParam) {
   const [isEditing, setIsEditing] = useState(false)
   const [filterColumnId, setFilterColumnId] = useState<string[]>([])
   const [showFilter, setShowFilter] = useState(false)
+  const [displayColumnForm, setDisplayColumnForm] = useState(false)
+
   const titleRef = useRef<HTMLHeadingElement>(null)
   const filterSelectorRef = useRef<HTMLDivElement>(null)
+  const filterButtonRef = useRef<HTMLButtonElement>(null)
 
-  // Confirm Modal
   const [showConfirm, setShowConfirm] = useState(false)
   const [confirmTitle, setConfirmTitle] = useState('')
+  const [confirmCallback, setConfirmCallback] = useState<() => void>(() => {})
 
   const currentPage: TypePage | undefined = pages.find(page => page.id === pageId)
   const currentColumns = currentPage?.columns ?? []
   const filteredColumns = currentColumns.filter(col => filterColumnId.includes(col.id)) ?? []
 
   const handleAddTaskButtonPress = (pageId: string, columnId: string) => {
-    if (pageId === '' || columnId === '') {
+    if (!pageId || !columnId) {
       alert('Add Task Page | Column Id is empty')
       return
     }
@@ -58,15 +67,13 @@ export default function List({
     setDisplayTaskForm(true)
   }
 
-  // Initialize filterColumnId on page change
   useEffect(() => {
-    if (!pages || pageId === '') return
+    if (!pages || !pageId) return
     const currentPage = pages.find(p => p.id === pageId)
     if (!currentPage) return
     setFilterColumnId(currentPage.columns.map(col => col.id))
   }, [pages, pageId])
 
-  // Click outside to disable editing
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (isEditing && titleRef.current && e.target !== titleRef.current) {
@@ -78,27 +85,22 @@ export default function List({
     }
 
     document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [isEditing, currentPage])
 
-  // Click outside to hide filter
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        showFilter &&
-        filterSelectorRef.current &&
-        !filterSelectorRef.current.contains(e.target as Node)
-      ) {
+      const target = e.target as HTMLElement
+      const clickInside =
+        filterButtonRef.current?.contains(target) ||
+        filterSelectorRef.current?.contains(target)
+      if (!clickInside) {
         setShowFilter(false)
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
   }, [showFilter])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLHeadingElement>) => {
@@ -125,21 +127,23 @@ export default function List({
     setFilterColumnId(update)
   }
 
+  const handleConfirmDisplay = (title: string, callback: () => void) => {
+    setConfirmTitle(title)
+    setConfirmCallback(() => callback)
+    setShowConfirm(true)
+  }
+
   const onConfirmDeletePage = () => {
     setShowConfirm(false)
 
     const index = pages.findIndex(page => page.id === pageId)
     let newIndex = 0
-    if (index > 0) {
-      newIndex = index - 1
-    } else if (index === 0 && pages.length > 1) {
-      newIndex = 1
-    }
+    if (index > 0) newIndex = index - 1
+    else if (index === 0 && pages.length > 1) newIndex = 1
 
     if (pages[newIndex] && pages[newIndex].id !== pageId) {
       setPageId(pages[newIndex].id)
     }
-
     handleDeletePage(pageId)
   }
 
@@ -154,8 +158,15 @@ export default function List({
           {showConfirm && (
             <ConfirmModal
               title={confirmTitle}
-              onConfirm={onConfirmDeletePage}
+              onConfirm={confirmCallback}
               onClose={() => setShowConfirm(false)}
+            />
+          )}
+
+          {displayColumnForm && (
+            <ColumnForm
+              handleAddColumn={handleAddColumn}
+              setDisplayColumnForm={setDisplayColumnForm}
             />
           )}
 
@@ -180,16 +191,17 @@ export default function List({
                 onKeyDown={handleKeyDown}
                 onBlur={() => setIsEditing(false)}
               >
-                {currentPage && currentPage.title}
+                {currentPage?.title}
               </h1>
 
               {/* Toolbar */}
-              <div className="flex gap-2 items-center mb-2">
+              <div className="flex gap-2 items-center mb-4 text-md">
                 {/* Filter */}
                 <div className="relative flex flex-col px-1">
                   <button
-                    onClick={() => setShowFilter(!showFilter)}
-                    className={`py-1 px-3 rounded-md flex gap-2 items-center ${
+                    ref={filterButtonRef}
+                    onClick={() => setShowFilter(prev => !prev)}
+                    className={`py-1 px-3 rounded-md flex gap-2 items-center cursor-pointer ${
                       showFilter
                         ? 'bg-yellow-200 hover:bg-yellow-300'
                         : 'bg-gray-200 hover:bg-gray-300'
@@ -202,32 +214,49 @@ export default function List({
                   {showFilter && (
                     <div
                       ref={filterSelectorRef}
-                      className="absolute top-10 border border-gray-300 w-fit rounded-md shadow-lg bg-white"
+                      className="absolute top-10 left-0 border border-gray-400  rounded-md shadow-lg bg-white"
                     >
                       <div className="p-2 flex flex-col gap-1">
-                        {currentColumns.map((col) => (
-                          <div
-                            key={col.id}
-                            onClick={() => handleToggleFilterColumnId(col.id)}
-                            className={`w-full px-2 min-w-30 pr-4 py-1 cursor-pointer rounded-sm hover:font-bold ${
-                              filterColumnId.includes(col.id) ? 'bg-amber-200' : ''
-                            }`}
-                          >
-                            {col.title}
+                        {currentColumns.length > 0 ? (
+                          currentColumns.map((col) => (
+                            <div
+                              key={col.id}
+                              onClick={() => handleToggleFilterColumnId(col.id)}
+                              className={`w-full px-2 min-w-35 pr-4 py-1 cursor-pointer rounded-sm ${
+                                filterColumnId.includes(col.id)
+                                  ? 'bg-amber-200 hover:bg-amber-300'
+                                  : 'hover:bg-gray-200'
+                              }`}
+                            >
+                              {col.title}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-gray-400 italic px-2 py-1 w-37">
+                            There are no columns to filter
                           </div>
-                        ))}
+                        )}
                       </div>
                     </div>
                   )}
                 </div>
 
+                {/* Add column */}
+                <div
+                  onClick={() => setDisplayColumnForm(true)}
+                  className="flex items-center gap-1 py-1 px-2 rounded bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                >
+                  New Column
+                  <PlusIcon className="h-4 w-4" />
+                </div>
+
                 {/* Delete Page */}
                 <div
                   onClick={() => {
-                    setConfirmTitle('Delete Page?')
-                    setShowConfirm(true)
+                    if (!currentPage) return
+                    handleConfirmDisplay(`Delete ${currentPage.title} Page?`, onConfirmDeletePage)
                   }}
-                  className="p-1 rounded bg-gray-200 hover:bg-gray-300 cursor-pointer"
+                  className="p-1 ms-1 rounded bg-gray-200 hover:bg-gray-300 cursor-pointer"
                 >
                   <TrashIcon className="h-5 w-5" />
                 </div>
@@ -240,6 +269,9 @@ export default function List({
                   handleAddTaskButtonPress={handleAddTaskButtonPress}
                   setDisplayTask={setDisplayTask}
                   setDisplayColumnId={setDisplayColumnId}
+                  handleDeleteColumn={handleDeleteColumn}
+                  handleUpdateColumn={handleUpdateColumn}
+                  handleConfirmDisplay={handleConfirmDisplay}
                 />
               )}
             </div>

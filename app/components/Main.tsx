@@ -4,10 +4,10 @@ import List from "./List"
 import Detail from "./Detail/Detail"
 import Tab from "./Tab"
 import TaskForm from "./TaskForm"
-import { TypePages, TypeTask } from "@/types/page"
+import { ColorEnum, TypePages, TypeTask } from "@/types/page"
 import { useEffect, useState } from "react"
 import { loadPages } from "@/utils/localSotrage"
-import {addPage, deletePage, updatePageTitle, addTask, updateTask, deleteTask} from "@/utils/pagesManager"
+import {addPage, deletePage, updatePageTitle, addTask, updateTask, deleteTask, addColumn, deleteColumn, updateColumn} from "@/utils/pagesManager"
 import {findTaskLocation} from "@/utils/findTaskLocation"
 
 
@@ -48,6 +48,22 @@ export default function HomePage() {
     deletePage(setPages, pageId)
   }
 
+  // Column -------------------
+  const handleAddColumn = (title:string, color: ColorEnum) => {
+    addColumn(setPages, pageId, title, color)
+  }
+
+  const handleDeleteColumn = (columnId: string) => {
+    if (!columnId || columnId.trim() === ''){
+      alert('Handle Delete column missing column id')
+      return
+    }
+    deleteColumn(setPages, pageId, columnId)
+  }
+
+  const handleUpdateColumn = (columnId: string, title:string, color: ColorEnum) => {
+    updateColumn(setPages, pageId, columnId, title, color)
+  }
 
   // Task -----------------------
   const handleAddTask = ( title:string, label:string) => {
@@ -114,6 +130,9 @@ export default function HomePage() {
                 setDisplayTask={setDisplayTask}
                 setDisplayColumnId={setDisplayColumnId}
                 handleDeletePage={handleDeletePage}
+                handleAddColumn={handleAddColumn}
+                handleDeleteColumn={handleDeleteColumn}
+                handleUpdateColumn={handleUpdateColumn}
               />
             </div>
   

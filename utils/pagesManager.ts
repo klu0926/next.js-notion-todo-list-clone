@@ -1,4 +1,4 @@
-import { TypePages, TypePage, TypeTask } from "@/types/page";
+import { TypePages, TypePage, TypeTask, TypeColumn, ColorEnum } from "@/types/page";
 import { loadPages, savePages } from "./localSotrage";
 import { generateID } from "./generateId";
 
@@ -17,9 +17,9 @@ export function addPage(
     title: pageTitle,
     order: pages.length,
     columns: [
-      { id: generateID(), title: 'Not started', order: 0, color: 'gray', tasks: [] },
-      { id: generateID(), title: 'In Progress', order: 1, color: 'blue', tasks: [] },
-      { id: generateID(), title: 'Completed', order: 2, color: 'green', tasks: [] },
+      { id: generateID(), title: 'Not started', order: 0, color: ColorEnum.Gray, tasks: [] },
+      { id: generateID(), title: 'In Progress', order: 1, color: ColorEnum.Blue, tasks: [] },
+      { id: generateID(), title: 'Completed', order: 2, color: ColorEnum.Green, tasks: [] },
     ]
   }
   // Create updared pages
@@ -56,7 +56,87 @@ export function updatePageTitle(
 } 
 
 
-// Task ----------
+// [Columns] --------------------------
+export function addColumn(
+  setPages: (pages: TypePages) => void, 
+  pageId: string,
+  title: string = 'New',
+  color: ColorEnum = ColorEnum.Gray
+){
+  const pages : TypePages = loadPages()
+
+  const newColumn : TypeColumn = {
+    id : generateID(),
+    title,
+    color: color,
+    tasks: []
+  }
+
+  const updated = pages.map(page => {
+    if (page.id !== pageId) return page
+
+    return {
+      ...page,
+      columns: [...page.columns, newColumn]
+    }
+  })
+    // Save to storage and update
+    savePages(updated)
+    setPages(updated)
+}
+
+
+export function deleteColumn(
+  setPages: (pages: TypePages) => void, 
+  pageId: string,
+  columnId: string
+){
+  const pages : TypePages = loadPages()
+
+  const updated = pages.map(page => {
+    if (page.id !== pageId) return page
+
+    return {
+      ...page,
+      columns:  page.columns.filter(col => col.id !== columnId)
+    }
+  })
+    // Save to storage and update
+    savePages(updated)
+    setPages(updated)
+}
+
+export function updateColumn(
+  setPages: (pages: TypePages) => void, 
+  pageId: string,
+  columnId: string,
+  newTitle?: string,
+  newColor?: ColorEnum,
+){
+  const pages : TypePages = loadPages()
+
+  const updated = pages.map(page => {
+    if (page.id !== pageId) return page
+
+    return {
+      ...page,
+      columns:  page.columns.map(col => {
+        if (col.id !== columnId) return col
+        return {
+          ...col,
+          title : newTitle?.trim() ? newTitle : col.title,
+          color : newColor ?? col.color // ?? if null, then...
+        }
+      })
+    }
+  })
+    // Save to storage and update
+    savePages(updated)
+    setPages(updated)
+}
+
+
+// [Task] ----------
 export function addTask(
   setPages: (pages: TypePages) => void, 
   pageId: string, 

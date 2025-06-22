@@ -30,7 +30,7 @@ export default function ConfirmModal({ title = 'Confirm Title', onConfirm, onClo
   return (
     <div className="confirm-modal fixed inset-0 flex items-center justify-center bg-black/10 bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl text-center">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <h2 className="text-lg mb-4">{title}</h2>
         <div className="flex justify-center gap-4 pt-2">
           <button
             onClick={onClose}

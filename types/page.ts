@@ -11,7 +11,7 @@ export interface TypeColumn {
   id: string,
   title: string
   order?: number
-  color: string
+  color: ColorEnum
   tasks: TypeTask[]
 }
 
@@ -23,3 +23,12 @@ export interface TypePage {
 }
 
 export type TypePages = TypePage[]
+
+export enum ColorEnum {
+  Gray = 'gray',
+  Blue = 'blue',
+  Red = 'red',
+  Green = 'green',
+  Purple = 'purple',
+  Yellow = 'yellow'
+}
