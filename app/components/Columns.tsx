@@ -23,7 +23,7 @@ export default function Columns({
   setDisplayTask, 
   setDisplayColumnId,
   handleDeleteColumn,
-  handleUpdateColumn,
+  // handleUpdateColumn,
   handleConfirmDisplay
 }: ColumnsParam) {
   const isEmpty = filteredColumns.length === 0
